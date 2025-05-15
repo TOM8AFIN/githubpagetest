@@ -1,161 +1,67 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Inventario Custody</title>
-  <link rel="icon" type="image/png" href="logo CUSTODY ok_v 1.png">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-      overflow-x: auto;
-    }
-    html {
-  margin: 0;
-  padding: 0;
-  overflow-x: auto;
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  background-color: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  min-width: max-content; /* Nuevo: garantiza que se expanda según el contenido */
-  width: 100%;
-  box-sizing: border-box;
-}
-
-
-    #timestamp {
-      font-size: 14px;
-      color: #555;
-    }
-
-    #logo {
-      height: 50px;
-    }
-
-    main {
-      overflow-x: auto;
-      width: 100%;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 28px;
-      margin-bottom: 20px;
-      color: #004080;
-    }
-
-    table {
-      width: max-content;
-      border-collapse: collapse;
-      background-color: white;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    th, td {
-      padding: 10px 12px;
-      text-align: left;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    th {
-      background-color: #0077cc;
-      color: white;
-      font-weight: 600;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f2f9ff;
-    }
-
-    tr:hover {
-      background-color: #e6f2ff;
-    }
-
-    @media (max-width: 768px) {
-      table {
-        font-size: 12px;
-      }
-
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      #logo {
-        align-self: flex-end;
-        margin-top: 10px;
-      }
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tabla Medicamentos Custody</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <div id="timestamp">Última actualización: cargando...</div>
-    <img src="logo CUSTODY ok_v 1.png" id="logo" alt="Logo Custody">
-  </header>
+  <div class="wrapper">
+    <header>
+      <div id="lastUpdated">Última actualización: --</div>
+      <img src="logo CUSTODY ok_v 1.png" alt="Logo Custody" />
+    </header>
 
-  <main>
-    <h1>Inventario de Medicamentos</h1>
-    <table id="tablaDatos"></table>
-  </main>
+    <main>
+      <table id="medTable"></table>
+    </main>
+  </div>
 
   <script>
-    const url = "https://docs.google.com/spreadsheets/d/1H1zhzbmPIJ-qNvmVpvGov70tipQBCmN47S_0LjigC0I/gviz/tq?tqx=out:csv";
-    const tabla = document.getElementById("tablaDatos");
-    const timestamp = document.getElementById("timestamp");
+    const sheetID = "1H1zhzbmPIJ-qNvmVpvGov70tipQBCmN47S_0LjigC0I";
+    const sheetName = "Hoja 1";
+    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
 
-    function cargarDatos() {
-      fetch(url)
-        .then(response => response.text())
-        .then(data => {
-          const rows = data.trim().split("\n").map(row => row.split(","));
-          tabla.innerHTML = "";
+    async function fetchData() {
+      const res = await fetch(url);
+      const text = await res.text();
+      const json = JSON.parse(text.substr(47).slice(0, -2));
 
-          // Encabezado
-          const header = document.createElement("tr");
-          rows[0].forEach(col => {
-            const th = document.createElement("th");
-            th.textContent = col;
-            header.appendChild(th);
-          });
-          tabla.appendChild(header);
+      const table = document.getElementById("medTable");
+      table.innerHTML = "";
 
-          // Datos
-          rows.slice(1).forEach(row => {
-            const tr = document.createElement("tr");
-            row.forEach(cell => {
-              const td = document.createElement("td");
-              td.textContent = cell;
-              tr.appendChild(td);
-            });
-            tabla.appendChild(tr);
-          });
+      // Encabezados
+      const header = document.createElement("tr");
+      json.table.cols.forEach(col => {
+        const th = document.createElement("th");
+        th.textContent = col.label;
+        header.appendChild(th);
+      });
+      table.appendChild(header);
 
-          const now = new Date();
-          timestamp.textContent = `Última actualización: ${now.toLocaleTimeString()}`;
-        })
-        .catch(error => {
-          tabla.innerHTML = `<tr><td colspan="20" style="color:red;">Error al cargar los datos: ${error}</td></tr>`;
+      // Filas
+      json.table.rows.forEach(row => {
+        const tr = document.createElement("tr");
+        row.c.forEach(cell => {
+          const td = document.createElement("td");
+          td.textContent = cell?.v ?? "";
+          tr.appendChild(td);
         });
+        table.appendChild(tr);
+      });
+
+      // Fecha de actualización
+      const now = new Date();
+      document.getElementById("lastUpdated").textContent =
+        "Última actualización: " +
+        now.toLocaleDateString("es-CO") +
+        " " +
+        now.toLocaleTimeString("es-CO");
     }
 
-    cargarDatos();
-    setInterval(cargarDatos, 10000); // cada 10 segundos
+    fetchData();
+    setInterval(fetchData, 10000); // Actualiza cada 10 segundos
   </script>
 </body>
 </html>
-
