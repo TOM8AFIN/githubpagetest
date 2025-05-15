@@ -47,7 +47,7 @@
         const tr = document.createElement("tr");
         row.c.forEach(cell => {
           const td = document.createElement("td");
-          td.textContent = (cell?.v ?? "").replace(/^"|"$/g, "");
+          td.textContent = cell?.v != null ? String(cell.v).replace(/^"|"$/g, "") : "";
           tr.appendChild(td);
         });
         table.appendChild(tr);
