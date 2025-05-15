@@ -14,7 +14,9 @@
     </header>
 
     <main>
-      <table id="medTable"></table>
+      <div class="table-container">
+        <table id="medTable"></table>
+      </div>
     </main>
   </div>
 
@@ -46,7 +48,6 @@
         row.c.forEach(cell => {
           const td = document.createElement("td");
           td.textContent = (cell?.v ?? "").replace(/^"|"$/g, "");
-
           tr.appendChild(td);
         });
         table.appendChild(tr);
@@ -62,7 +63,8 @@
     }
 
     fetchData();
-    setInterval(fetchData, 10000); // Actualiza cada 10 segundos
+    setInterval(fetchData, 10000);
   </script>
 </body>
 </html>
+
