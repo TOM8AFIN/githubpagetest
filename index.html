@@ -2,49 +2,105 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Inventario de medicamentos Custody</title>
+  <title>Inventario Custody</title>
+  <link rel="icon" type="image/png" href="logo CUSTODY ok_v 1.png">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    #timestamp {
+      font-size: 14px;
+      color: #555;
+    }
+
+    #logo {
+      height: 50px;
+    }
+
+    main {
+      padding: 30px;
     }
 
     h1 {
       text-align: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #004080;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
-      font-size: 14px;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+      overflow: hidden;
     }
 
     th, td {
-      border: 1px solid #ccc;
-      padding: 6px;
+      padding: 10px 12px;
       text-align: left;
+      border-bottom: 1px solid #e0e0e0;
     }
 
     th {
-      background-color: #f0f0f0;
+      background-color: #0077cc;
+      color: white;
+      font-weight: 600;
     }
 
     tr:nth-child(even) {
-      background-color: #f9f9f9;
+      background-color: #f2f9ff;
+    }
+
+    tr:hover {
+      background-color: #e6f2ff;
     }
 
     @media (max-width: 768px) {
       table {
         font-size: 12px;
       }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      #logo {
+        align-self: flex-end;
+        margin-top: 10px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Inventario de Productos - Google Sheets</h1>
-  <table id="tablaDatos"></table>
-  <p style="text-align: center;">Última actualización: <span id="timestamp"></span></p>
+  <header>
+    <div id="timestamp">Última actualización: cargando...</div>
+    <img src="logo CUSTODY ok_v 1.png" id="logo" alt="Logo Custody">
+  </header>
+
+  <main>
+    <h1>Inventario de Medicamentos</h1>
+    <table id="tablaDatos"></table>
+  </main>
 
   <script>
     const url = "https://docs.google.com/spreadsheets/d/1H1zhzbmPIJ-qNvmVpvGov70tipQBCmN47S_0LjigC0I/gviz/tq?tqx=out:csv";
@@ -56,8 +112,6 @@
         .then(response => response.text())
         .then(data => {
           const rows = data.trim().split("\n").map(row => row.split(","));
-
-          // Limpiar tabla
           tabla.innerHTML = "";
 
           // Encabezado
@@ -69,7 +123,7 @@
           });
           tabla.appendChild(header);
 
-          // Filas de datos
+          // Datos
           rows.slice(1).forEach(row => {
             const tr = document.createElement("tr");
             row.forEach(cell => {
@@ -80,20 +134,17 @@
             tabla.appendChild(tr);
           });
 
-          // Timestamp
           const now = new Date();
-          timestamp.textContent = now.toLocaleTimeString();
+          timestamp.textContent = `Última actualización: ${now.toLocaleTimeString()}`;
         })
         .catch(error => {
           tabla.innerHTML = `<tr><td colspan="20" style="color:red;">Error al cargar los datos: ${error}</td></tr>`;
         });
     }
 
-    // Cargar inicialmente
     cargarDatos();
-
-    // Actualizar cada 10 segundos (10000 milisegundos)
-    setInterval(cargarDatos, 10000);
+    setInterval(cargarDatos, 10000); // cada 10 segundos
   </script>
 </body>
 </html>
+
