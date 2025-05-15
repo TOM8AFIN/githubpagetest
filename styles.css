@@ -1,1 +1,68 @@
+/* Reset general y scroll horizontal permitido */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  font-family: Arial, sans-serif;
+  background-color: #f9fbfc;
+}
+
+/* Wrapper que se adapta al ancho de la tabla */
+.wrapper {
+  min-width: max-content;
+}
+
+/* Header fijo que cubre el ancho completo */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Logo a la derecha */
+header img {
+  height: 60px;
+}
+
+/* Texto de actualización */
+#lastUpdated {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Contenedor de tabla con scroll horizontal si es necesario */
+main {
+  overflow-x: auto;
+  width: 100%;
+}
+
+/* Tabla */
+table {
+  width: max-content;
+  border-collapse: collapse;
+  margin: 0 auto;
+  background-color: #f2f8fd;
+}
+
+th {
+  background-color: #0077c2;
+  color: white;
+  padding: 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+}
 
